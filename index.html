@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>主題切換按鈕</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            background: #f8f8f8; /* 一開始白色 */
+            color: #fff; /* 一開始白色 */
+            min-height: 100vh;
+            transition: background 0.8s ease;
+            overflow-x: hidden;
+            padding: 20px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        body.light-mode {
+            background: #2c2c2e; /* 切換黑色背景 */
+            color: #333; /* 切換黑色文字 */
+        }
+        
+        /* 蘋果風格邊框 - 右上角 */
+        .apple-frame {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 66px;
+            height: 66px;
+            border-radius: 16px;
+            background: linear-gradient(145deg, #2a2a3a, #1a1a2a); /* 初始白色 */
+            box-shadow: 
+                0 6px 12px rgba(0, 0, 0, 0.2),
+                inset 0 -4px 8px rgba(0, 0, 0, 0.1),
+                inset 0 4px 8px rgba(255, 255, 255, 0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 8px;
+            z-index: 1000;
+            transition: all 0.8s ease;
+        }
+        
+        body.light-mode .apple-frame {
+            background: linear-gradient(145deg, #f5f5f5, #e0e0e0); /* 切換黑色 */
+            box-shadow: 
+                0 6px 12px rgba(0, 0, 0, 0.3),
+                inset 0 -4px 8px rgba(0, 0, 0, 0.3),
+                inset 0 4px 8px rgba(100, 100, 150, 0.2);
+        }
+        
+        .apple-frame::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 16px;
+            box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.15);
+            pointer-events: none;
+        }
+        
+        body.light-mode .apple-frame::after {
+            box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.25);
+        }
+        
+        /* 圖標容器 */
+        .toggle-icon {
+            width: 48px;
+            height: 48px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.8s ease;
+        }
+        
+        .toggle-icon .sun-container, .toggle-icon .moon {
+            transition: all 0.8s ease;
+            position: absolute;
+        }
+        
+        /* 初始狀態：顯示月亮（黑色背景） */
+        .toggle-icon .moon {
+            opacity: 1;
+            transform: rotate(0) scale(1);
+        }
+        
+        .toggle-icon .sun-container {
+            opacity: 0;
+            transform: rotate(90deg) scale(0.5);
+        }
+        
+        /* 切換狀態：顯示太陽（白色背景） */
+        .toggle-icon.active .moon {
+            opacity: 0;
+            transform: rotate(-90deg) scale(0.5);
+        }
+        
+        .toggle-icon.active .sun-container {
+            opacity: 1;
+            transform: rotate(0) scale(1);
+        }
+        
+        /* 月亮圖標樣式 */
+        .moon.icon {
+            position: relative;
+            width: 40px;
+            height: 40px;
+        }
+        
+        /* 暗月部分 */
+        .moon.icon .dark-moon {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: rgba(60, 60, 100, 0.8);
+            box-shadow: 
+                0 0 8px rgba(0, 0, 0, 0.5),
+                inset 0 0 8px rgba(0, 0, 0, 0.3);
+        }
+        
+        /* 新月部分 */
+        .moon.icon .crescent {
+            position: absolute;
+            width: 60%;
+            height: 60%;
+            border-radius: 50%;
+            background: #E4EDF8;
+            box-shadow: 
+                0 0 10px #FFFFFF,
+                inset -2px -2px 4px rgba(255, 255, 255, 0.5);
+            top: 20%;
+            left: 10%;
+            animation: crescent-glow 4s infinite alternate;
+            transform: rotate(-15deg);
+        }
+        
+        /* 星星效果 */
+        .moon.icon .star {
+            position: absolute;
+            background: #FFFFFF;
+            border-radius: 50%;
+            box-shadow: 0 0 2px #FFFFFF;
+            animation: twinkle 3s infinite alternate;
+        }
+        
+        .moon.icon .star:nth-child(3) {
+            width: 1px;
+            height: 1px;
+            top: 15%;
+            right: 20%;
+            animation-delay: 0.5s;
+        }
+        
+        .moon.icon .star:nth-child(4) {
+            width: 1px;
+            height: 1px;
+            bottom: 25%;
+            right: 15%;
+            animation-delay: 1s;
+        }
+        
+        .moon.icon .star:nth-child(5) {
+            width: 2px;
+            height: 2px;
+            top: 40%;
+            right: 5%;
+            animation-delay: 1.5s;
+        }
+        
+        /* 太陽圖標樣式 */
+        .sun-container {
+            position: relative;
+            width: 48px;
+            height: 48px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .sun-glow {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255,215,0,0.4) 0%, rgba(255,215,0,0) 70%);
+            animation: sun-glowing 3s infinite alternate;
+            filter: blur(3px);
+        }
+        
+        .sun-glow-outer {
+            position: absolute;
+            width: 140%;
+            height: 140%;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255,215,0,0.2) 0%, rgba(255,215,0,0) 60%);
+            animation: sun-glowing-outer 4s infinite alternate;
+            filter: blur(5px);
+        }
+        
+        .sun.icon {
+            color: #FFD700;
+            position: relative;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: currentColor;
+            box-shadow: 
+                0 0 0 1px rgba(255, 215, 0, 0.8),
+                0 0 8px rgba(255, 215, 0, 0.6),
+                0 0 16px rgba(255, 215, 0, 0.4),
+                -12px 0 0 -4px currentColor, 
+                12px 0 0 -4px currentColor, 
+                0 -12px 0 -4px currentColor, 
+                0 12px 0 -4px currentColor, 
+                -9px -9px 0 -4px currentColor, 
+                -9px 9px 0 -4px currentColor, 
+                9px -9px 0 -4px currentColor, 
+                9px 9px 0 -4px currentColor;
+            animation: sun-pulse 3s infinite alternate;
+            z-index: 2;
+        }
+        
+        /* 動畫效果 */
+        @keyframes sun-pulse {
+            0% {
+                box-shadow: 
+                    0 0 0 1px rgba(255, 215, 0, 0.8),
+                    0 0 8px rgba(255, 215, 0, 0.6),
+                    0 0 16px rgba(255, 215, 0, 0.4),
+                    -12px 0 0 -4px #FFD700, 
+                    12px 0 0 -4px #FFD700, 
+                    0 -12px 0 -4px #FFD700, 
+                    0 12px 0 -4px #FFD700, 
+                    -9px -9px 0 -4px #FFD700, 
+                    -9px 9px 0 -4px #FFD700, 
+                    9px -9px 0 -4px #FFD700, 
+                    9px 9px 0 -4px #FFD700;
+            }
+            100% {
+                box-shadow: 
+                    0 0 0 2px rgba(255, 215, 0, 0.9),
+                    0 0 12px rgba(255, 215, 0, 0.8),
+                    0 0 24px rgba(255, 215, 0, 0.6),
+                    -12px 0 0 -3px #FFAA00, 
+                    12px 0 0 -3px #FFAA00, 
+                    0 -12px 0 -3px #FFAA00, 
+                    0 12px 0 -3px #FFAA00, 
+                    -9px -9px 0 -3px #FFAA00, 
+                    -9px 9px 0 -3px #FFAA00, 
+                    9px -9px 0 -3px #FFAA00, 
+                    9px 9px 0 -3px #FFAA00;
+            }
+        }
+        
+        @keyframes sun-glowing {
+            0% {
+                opacity: 0.6;
+                transform: scale(1);
+            }
+            100% {
+                opacity: 0.8;
+                transform: scale(1.1);
+            }
+        }
+        
+        @keyframes sun-glowing-outer {
+            0% {
+                opacity: 0.3;
+                transform: scale(1);
+            }
+            100% {
+                opacity: 0.5;
+                transform: scale(1.2);
+            }
+        }
+        
+        @keyframes crescent-glow {
+            0% {
+                box-shadow: 
+                    0 0 8px #FFFFFF,
+                    inset -2px -2px 4px rgba(255, 255, 255, 0.5);
+            }
+            100% {
+                box-shadow: 
+                    0 0 14px #FFFFFF,
+                    inset -2px -2px 6px rgba(255, 255, 255, 0.7);
+            }
+        }
+        
+        @keyframes twinkle {
+            0% {
+                opacity: 0.3;
+                transform: scale(0.8);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1.2);
+            }
+        }
+        
+        /* 測試內容樣式 */
+        .test-content {
+            max-width: 800px;
+            margin: 80px auto 40px;
+            padding: 30px;
+            background: rgba(40, 40, 40, 0.9);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            transition: all 0.5s ease;
+        }
+        
+        body.light-mode .test-content {
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .test-content h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #64B5F6;
+        }
+        
+        body.light-mode .test-content h1 {
+            color: #3498db;
+        }
+        
+        .test-content p {
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+        
+        .status {
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            text-align: center;
+            font-weight: bold;
+            background: #2c3e50;
+            transition: all 0.5s ease;
+        }
+        
+        body.light-mode .status {
+            background: #e8f4fc;
+        }
+        
+        .color-samples {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .color-sample {
+            width: 80px;
+            height: 80px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .dark-sample {
+            background: #2c2c2e;
+            color: white;
+            border: 2px solid #444;
+        }
+        
+        .light-sample {
+            background: #f8f8f8;
+            color: #333;
+            border: 2px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+    <!-- 蘋果風格切換按鈕 -->
+    <div class="apple-frame">
+        <div class="toggle-icon" id="toggleIcon">
+            <div class="moon icon">
+                <div class="dark-moon"></div>
+                <div class="crescent"></div>
+                <div class="star"></div>
+                <div class="star"></div>
+                <div class="star"></div>
+            </div>
+            <div class="sun-container">
+                <div class="sun-glow-outer"></div>
+                <div class="sun-glow"></div>
+                <div class="sun icon"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 測試內容 -->
+    <div class="test-content">
+        <h1>主題切換功能</h1>
+        <p>這個網頁展示主題切換功能。</p>
+        <p>初始狀態為<strong>淺色模式</strong>，點擊右上角的切換按鈕可以自由切換背景模式。</p>
+
+        <div class="color-samples">
+            <div class="color-sample dark-sample">深色<br>#2c2c2e</div>
+            <div class="color-sample light-sample">淺色<br>#f8f8f8</div>
+        </div>
+        
+        <div class="status" id="themeStatus">
+            當前主題: 淺色模式
+        </div>
+    </div>
+
+    <script>
+        // 切換圖標功能
+        document.addEventListener('DOMContentLoaded', function() {
+            const toggleIcon = document.getElementById('toggleIcon');
+            const body = document.body;
+            const themeStatus = document.getElementById('themeStatus');
+            
+            // 檢查是否有保存的主題偏好
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'light') {
+                body.classList.add('light-mode');
+                toggleIcon.classList.add('active');
+                themeStatus.textContent = '當前主題: 深色模式';
+            } else {
+                body.classList.remove('light-mode');
+                toggleIcon.classList.remove('active');
+                themeStatus.textContent = '當前主題: 淺色模式';
+            }
+            
+            // 點擊切換主題
+            toggleIcon.addEventListener('click', function() {
+                this.classList.toggle('active');
+                body.classList.toggle('light-mode');
+                
+                // 更新狀態顯示
+                if (body.classList.contains('light-mode')) {
+                    themeStatus.textContent = '當前主題: 深色模式';
+                    localStorage.setItem('theme', 'light');
+                } else {
+                    themeStatus.textContent = '當前主題: 淺色模式';
+                    localStorage.setItem('theme', 'dark');
+                }
+            });
+            
+            // 監聽系統主題變化
+            const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
+            
+            // 初始設置（如果沒有用戶偏好）
+            if (!savedTheme) {
+                // 現在默認是暗色模式，所以如果系統是亮色模式，我們需要切換
+                if (!prefersDarkScheme.matches) {
+                    body.classList.add('light-mode');
+                    toggleIcon.classList.add('active');
+                    themeStatus.textContent = '當前主題: 亮色模式';
+                    localStorage.setItem('theme', 'light');
+                }
+            }
+            
+            // 監聽系統主題變化
+            prefersDarkScheme.addEventListener('change', e => {
+                // 只有在用戶沒有明確設置偏好時才跟隨系統
+                if (!savedTheme) {
+                    if (e.matches) {
+                        body.classList.remove('light-mode');
+                        toggleIcon.classList.remove('active');
+                        themeStatus.textContent = '當前主題: 暗色模式';
+                        localStorage.setItem('theme', 'dark');
+                    } else {
+                        body.classList.add('light-mode');
+                        toggleIcon.classList.add('active');
+                        themeStatus.textContent = '當前主題: 亮色模式';
+                        localStorage.setItem('theme', 'light');
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
