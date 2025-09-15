@@ -18,6 +18,10 @@
 2. 將 `index.html` 直接打開，或放到伺服器執行
 3. 點擊右上角按鈕切換主題 🎉
 
-```bash
-git clone https://github.com/你的帳號/your-repo-name.git
-cd your-repo-name
+# 技術與狀態
+HTML5
+CSS3 (Flexbox + 動畫 + 漸層)
+Vanilla JavaScript (無框架)
+
+已完成第一版，歡迎 Fork 或 PR
+後續可能加入更多主題樣式（如彩色主題）
