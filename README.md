@@ -3,7 +3,7 @@
 ## 🌐 語言 / Language
 請選擇你想看的語言 / Please select your language:
 
-- [繁體中文 (Traditional Chinese)](README_Traditional Chinese.md)
+- [繁體中文 (Traditional Chinese)](README_zh-TW.md)
 - [简体中文 (Simplified Chinese)](README_zh-CN.md)
 - [English](README_en.md)
 - [Français](README_fr.md)
