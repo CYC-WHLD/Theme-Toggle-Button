@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Multi-language README</title>
+<style>
+  body { font-family: Arial, sans-serif; padding: 2rem; background: #f9f9f9; transition: background 0.3s; }
+  .lang-btn { margin: 0.2rem; padding: 0.5rem 1rem; cursor: pointer; border: 1px solid #ccc; border-radius: 5px; }
+  .lang-btn.active { background: #007bff; color: white; border-color: #007bff; }
+  .lang-section { display: none; margin-top: 1rem; }
+  .lang-section.active { display: block; }
+</style>
+</head>
+<body>
+
+<h1>🍎 Apple Style Theme Toggle Button</h1>
+<p>Click a button to switch language:</p>
+
+<div>
+  <button class="lang-btn active" data-lang="zh-TW">繁體中文</button>
+  <button class="lang-btn" data-lang="zh-CN">简体中文</button>
+  <button class="lang-btn" data-lang="en">English</button>
+  <button class="lang-btn" data-lang="fr">Français</button>
+  <button class="lang-btn" data-lang="ja">日本語</button>
+  <button class="lang-btn" data-lang="ko">한국어</button>
+  <button class="lang-btn" data-lang="it">Italiano</button>
+  <button class="lang-btn" data-lang="de">Deutsch</button>
+</div>
+
+<!-- 語言內容 -->
+<div id="zh-TW" class="lang-section active">
+  <h2>✨ 功能特色</h2>
+  <ul>
+    <li>🌓 點擊右上角按鈕即可切換主題</li>
+    <li>🎨 太陽與月亮圖示切換動畫</li>
+    <li>💾 使用 localStorage 保存使用者偏好</li>
+    <li>🖥️ 支援系統偏好 (prefers-color-scheme)</li>
+  </ul>
+</div>
+
+<div id="zh-CN" class="lang-section">
+  <h2>✨ 功能特色</h2>
+  <ul>
+    <li>🌓 点击右上角按钮即可切换主题</li>
+    <li>🎨 太阳与月亮图标切换动画</li>
+    <li>💾 使用 localStorage 保存用户偏好</li>
+    <li>🖥️ 支持系统偏好 (prefers-color-scheme)</li>
+  </ul>
+</div>
+
+<div id="en" class="lang-section">
+  <h2>✨ Features</h2>
+  <ul>
+    <li>🌓 Click the top-right button to toggle theme</li>
+    <li>🎨 Animated Sun and Moon icon transitions</li>
+    <li>💾 Save user preference using localStorage</li>
+    <li>🖥️ Support system preference (prefers-color-scheme)</li>
+  </ul>
+</div>
+
+<div id="fr" class="lang-section">
+  <h2>✨ Fonctionnalités</h2>
+  <ul>
+    <li>🌓 Cliquez sur le bouton en haut à droite pour changer le thème</li>
+    <li>🎨 Animation des icônes Soleil et Lune</li>
+    <li>💾 Sauvegarde les préférences utilisateur via localStorage</li>
+    <li>🖥️ Support des préférences système (prefers-color-scheme)</li>
+  </ul>
+</div>
+
+<div id="ja" class="lang-section">
+  <h2>✨ 機能</h2>
+  <ul>
+    <li>🌓 右上のボタンをクリックしてテーマを切り替え</li>
+    <li>🎨 太陽と月のアイコンアニメーション</li>
+    <li>💾 localStorage にユーザー設定を保存</li>
+    <li>🖥️ システム設定に対応 (prefers-color-scheme)</li>
+  </ul>
+</div>
+
+<div id="ko" class="lang-section">
+  <h2>✨ 기능</h2>
+  <ul>
+    <li>🌓 오른쪽 상단 버튼 클릭으로 테마 전환</li>
+    <li>🎨 태양과 달 아이콘 애니메이션</li>
+    <li>💾 localStorage로 사용자 설정 저장</li>
+    <li>🖥️ 시스템 선호도 지원 (prefers-color-scheme)</li>
+  </ul>
+</div>
+
+<div id="it" class="lang-section">
+  <h2>✨ Caratteristiche</h2>
+  <ul>
+    <li>🌓 Clicca il pulsante in alto a destra per cambiare tema</li>
+    <li>🎨 Animazione icone Sole e Luna</li>
+    <li>💾 Salva le preferenze utente con localStorage</li>
+    <li>🖥️ Supporta le preferenze di sistema (prefers-color-scheme)</li>
+  </ul>
+</div>
+
+<div id="de" class="lang-section">
+  <h2>✨ Funktionen</h2>
+  <ul>
+    <li>🌓 Klicke den oberen rechten Button, um das Theme zu wechseln</li>
+    <li>🎨 Animierte Sonnen- und Mond-Symbole</li>
+    <li>💾 Benutzerpräferenzen mit localStorage speichern</li>
+    <li>🖥️ Unterstützung von Systemeinstellungen (prefers-color-scheme)</li>
+  </ul>
+</div>
+
+<script>
+  const buttons = document.querySelectorAll('.lang-btn');
+  const sections = document.querySelectorAll('.lang-section');
+
+  buttons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      // 按鈕 active 狀態
+      buttons.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      
+      // 語言切換
+      const lang = btn.dataset.lang;
+      sections.forEach(sec => sec.classList.remove('active'));
+      document.getElementById(lang).classList.add('active');
+    });
+  });
+</script>
+
+</body>
+</html>
